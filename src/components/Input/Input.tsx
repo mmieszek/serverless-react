@@ -1,7 +1,19 @@
-import React from "react";
+import React, { FC } from "react";
 import styled from "styled-components";
 
-export const Input = () => <InputControl placeholder="Type your message" />;
+interface Props {
+  value?: string;
+  onValueChange: (message: string) => void;
+  onAdd: () => void;
+}
+export const Input: FC<Props> = ({ value, onValueChange, onAdd }) => (
+  <InputControl
+    placeholder="Type your message"
+    value={value}
+    onChange={e => onValueChange(e.target.value)}
+    onKeyDown={e => e.key === "Enter" && onAdd()}
+  />
+);
 
 const InputControl = styled.input`
   position: fixed;

@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { Sidebar, Input, Messages } from "./components";
 import { Channel } from "./types";
 
-const channels: Channel[] = [
+const initialChannels: Channel[] = [
   {
     name: "general",
     messages: [
@@ -26,12 +26,26 @@ const channels: Channel[] = [
 ];
 
 const App: React.FC = () => {
+  const [channels, setChannels] = useState<Channel[]>(initialChannels);
+  const [newMessage, setNewMessage] = useState("");
   return (
     <>
       <Sidebar channels={channels} />
       <Content>
         <Messages messages={channels[0].messages} />
-        <Input />
+        <Input
+          value={newMessage}
+          onValueChange={setNewMessage}
+          onAdd={() => {
+            channels[0].messages.push({
+              user: "marcin",
+              timestamp: new Date(),
+              content: newMessage
+            });
+            setChannels(channels);
+            setNewMessage("");
+          }}
+        />
       </Content>
     </>
   );
