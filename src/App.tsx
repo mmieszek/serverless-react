@@ -5,8 +5,11 @@ import { Channel, ListChannelsGraphQLResponse } from "./types";
 import { withAuthenticator } from "aws-amplify-react";
 import { API, graphqlOperation } from "aws-amplify";
 import { listChannelsWithMessages } from "./graphql/customQueries";
-import { CreateMessageMutation } from "./API";
 import { createMessage } from "./graphql/mutations";
+import { onCreateMessage } from "./graphql/subscriptions";
+import { Auth } from "aws-amplify";
+import Observable from "zen-observable";
+import { CognitoUser } from "@aws-amplify/auth";
 
 const initialChannels: Channel[] = [];
 
@@ -32,24 +35,43 @@ const App: React.FC = () => {
     }
     fetchData();
   }, []);
+  useEffect(() => {
+    let sub: any;
+    const subscribe = async () => {
+      const user: CognitoUser = await Auth.currentAuthenticatedUser();
+      const subscription = API.graphql(
+        graphqlOperation(onCreateMessage, { owner: user.getUsername() })
+      ) as Observable<object>;
+      sub = subscription.subscribe({
+        next: (response: any) => {
+          const message = response.value.data.onCreateMessage;
+          setChannels(channels => {
+            const [channel, ...rest] = channels;
+            if (!channel.messages.some(item => item.id === message.id)) {
+              channel.messages.push({
+                id: message.id,
+                content: message.content,
+                user: message.owner,
+                timestamp: new Date(message.timestamp)
+              });
+            }
+            return [channel, ...rest];
+          });
+        }
+      });
+    };
+    subscribe();
+    return () => {
+      sub && sub.unsubscribe();
+    };
+  }, []);
   const onAdd = async () => {
     const input = {
       content: newMessage,
       messageChannelId: channels[0].id,
       timestamp: new Date().toISOString()
     };
-    const { data } = (await API.graphql(
-      graphqlOperation(createMessage, { input })
-    )) as { data: CreateMessageMutation };
-    if (data.createMessage) {
-      channels[0].messages.push({
-        id: data.createMessage.id,
-        user: data.createMessage.owner as string,
-        timestamp: new Date(data.createMessage.timestamp),
-        content: newMessage
-      });
-      setChannels(channels);
-    }
+    await API.graphql(graphqlOperation(createMessage, { input }));
     setNewMessage("");
   };
   return (
