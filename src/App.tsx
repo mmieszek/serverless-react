@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { Sidebar, Input, Messages } from "./components";
 import { Channel } from "./types";
+import { withAuthenticator } from "aws-amplify-react";
 
 const initialChannels: Channel[] = [
   {
@@ -53,6 +54,7 @@ const App: React.FC = () => {
 const Content = styled.div`
   padding: 50px 0 50px 250px;
   display: flex;
+  flex-grow: 1;
 `;
 
-export default App;
+export default withAuthenticator(App, true);

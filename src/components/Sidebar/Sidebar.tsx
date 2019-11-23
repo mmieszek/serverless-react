@@ -21,8 +21,9 @@ const Container = styled.div`
   left: 0;
   width: 180px;
   background-color: #3a133e;
-  padding-top: 50px;
+  padding-top: 80px;
   padding-left: 20px;
+  z-index: -1;
 `;
 const Text = styled.div`
   font-family: Lato, sans-serif;
