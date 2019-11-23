@@ -1,6 +1,7 @@
 import React, { FC } from "react";
 import styled from "styled-components";
 import { Message } from "../../types";
+import { Giphy } from "../Giphy";
 
 interface Props {
   messages: Message[];
@@ -12,7 +13,11 @@ export const Messages: FC<Props> = ({ messages }) => (
         <div>
           <strong>{message.user}</strong> {message.timestamp.toDateString()}
         </div>
-        <div>{message.content}</div>
+        {message.content.indexOf("giphy") === 0 ? (
+          <Giphy text={message.content.substring(6)} />
+        ) : (
+          <div>{message.content}</div>
+        )}
       </StyledMessage>
     ))}
   </Container>

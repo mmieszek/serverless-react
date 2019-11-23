@@ -1,0 +1,34 @@
+{
+    "paths": [
+        {
+            "name": "/giphy",
+            "lambdaFunction": "giphyFunction",
+            "privacy": {
+                "open": true
+            }
+        }
+    ],
+    "resourceName": "giphyFunction",
+    "apiName": "giphyFunction",
+    "functionArns": [
+        {
+            "lambdaFunction": "giphyFunction"
+        }
+    ],
+    "privacy": {
+        "auth": 0,
+        "unauth": 0,
+        "authRoleName": "workshops-1-dev-20191123003501-authRole",
+        "unAuthRoleName": "workshops-1-dev-20191123003501-unauthRole"
+    },
+    "dependsOn": [
+        {
+            "category": "function",
+            "resourceName": "giphyFunction",
+            "attributes": [
+                "Name",
+                "Arn"
+            ]
+        }
+    ]
+}
