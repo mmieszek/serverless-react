@@ -5,28 +5,10 @@ import { Channel } from "./types";
 import { withAuthenticator } from "aws-amplify-react";
 import { API, graphqlOperation } from "aws-amplify";
 import { listChannels } from "./graphql/queries";
-import { ListChannelsQuery } from "./API";
+import { ListChannelsQuery, CreateMessageMutation } from "./API";
+import { createMessage } from "./graphql/mutations";
 
-const initialChannels: Channel[] = [
-  {
-    id: "general",
-    name: "general",
-    messages: [
-      {
-        id: "1",
-        timestamp: new Date("2019-11-23T09:30:30.000Z"),
-        user: "marcin",
-        content: "This is my first message"
-      },
-      {
-        id: "2",
-        timestamp: new Date("2019-11-23T09:31:30.000Z"),
-        user: "marcin",
-        content: "This is my second message"
-      }
-    ]
-  }
-];
+const initialChannels: Channel[] = [];
 
 const App: React.FC = () => {
   const [channels, setChannels] = useState<Channel[]>(initialChannels);
@@ -52,25 +34,32 @@ const App: React.FC = () => {
     }
     fetchData();
   }, []);
+  const onAdd = async () => {
+    const input = {
+      content: newMessage,
+      messageChannelId: channels[0].id,
+      timestamp: new Date().toISOString()
+    };
+    const { data } = (await API.graphql(
+      graphqlOperation(createMessage, { input })
+    )) as { data: CreateMessageMutation };
+    if (data.createMessage) {
+      channels[0].messages.push({
+        id: data.createMessage.id,
+        user: data.createMessage.owner as string,
+        timestamp: new Date(data.createMessage.timestamp),
+        content: newMessage
+      });
+      setChannels(channels);
+    }
+    setNewMessage("");
+  };
   return (
     <>
       <Sidebar channels={channels} />
       <Content>
-        <Messages messages={channels[0].messages} />
-        <Input
-          value={newMessage}
-          onValueChange={setNewMessage}
-          onAdd={() => {
-            channels[0].messages &&
-              channels[0].messages.push({
-                user: "marcin",
-                timestamp: new Date(),
-                content: newMessage
-              });
-            setChannels(channels);
-            setNewMessage("");
-          }}
-        />
+        {channels[0] && <Messages messages={channels[0].messages} />}
+        <Input value={newMessage} onValueChange={setNewMessage} onAdd={onAdd} />
       </Content>
     </>
   );
