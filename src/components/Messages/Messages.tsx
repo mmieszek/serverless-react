@@ -8,7 +8,7 @@ interface Props {
 export const Messages: FC<Props> = ({ messages }) => (
   <Container>
     {messages.map(message => (
-      <StyledMessage>
+      <StyledMessage key={message.id}>
         <div>
           <strong>{message.user}</strong> {message.timestamp.toDateString()}
         </div>
