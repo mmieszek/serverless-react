@@ -1,0 +1,19 @@
+{
+    "dev": {
+        "awscloudformation": {
+            "AuthRoleName": "workshops-1-dev-20191123003501-authRole",
+            "UnauthRoleArn": "arn:aws:iam::232590055337:role/workshops-1-dev-20191123003501-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::232590055337:role/workshops-1-dev-20191123003501-authRole",
+            "Region": "eu-central-1",
+            "DeploymentBucketName": "workshops-1-dev-20191123003501-deployment",
+            "UnauthRoleName": "workshops-1-dev-20191123003501-unauthRole",
+            "StackName": "workshops-1-dev-20191123003501",
+            "StackId": "arn:aws:cloudformation:eu-central-1:232590055337:stack/workshops-1-dev-20191123003501/b4622f90-0d80-11ea-826c-02ea990c0932"
+        },
+        "categories": {
+            "auth": {
+                "workshops1f629f82a": {}
+            }
+        }
+    }
+}
