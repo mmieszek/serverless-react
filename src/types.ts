@@ -9,3 +9,24 @@ export interface Message {
   user: string;
   content: string;
 }
+
+export interface ListChannelsGraphQLResponse {
+  data: {
+    listChannels: {
+      items: ChannelGraphQLResponse[];
+    };
+  };
+}
+export interface ChannelGraphQLResponse {
+  id: string;
+  name: string;
+  messages: {
+    items: MessageGraphQLResponse[];
+  };
+}
+export interface MessageGraphQLResponse {
+  id: string;
+  content: string;
+  owner: string;
+  timestamp: string;
+}

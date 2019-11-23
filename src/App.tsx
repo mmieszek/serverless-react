@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { Sidebar, Input, Messages } from "./components";
-import { Channel } from "./types";
+import { Channel, ListChannelsGraphQLResponse } from "./types";
 import { withAuthenticator } from "aws-amplify-react";
 import { API, graphqlOperation } from "aws-amplify";
-import { listChannels } from "./graphql/queries";
-import { ListChannelsQuery, CreateMessageMutation } from "./API";
+import { listChannelsWithMessages } from "./graphql/customQueries";
+import { CreateMessageMutation } from "./API";
 import { createMessage } from "./graphql/mutations";
 
 const initialChannels: Channel[] = [];
@@ -15,22 +15,20 @@ const App: React.FC = () => {
   const [newMessage, setNewMessage] = useState("");
   useEffect(() => {
     async function fetchData() {
-      const { data } = (await API.graphql(graphqlOperation(listChannels))) as {
-        data: ListChannelsQuery;
-      };
-      if (data.listChannels && data.listChannels.items) {
-        const newChannels: Channel[] = [];
-        data.listChannels.items.forEach(newChannel => {
-          if (newChannel) {
-            newChannels.push({
-              name: newChannel.name,
-              messages: [],
-              id: newChannel.id
-            });
-          }
-        });
-        setChannels(channels => [...channels, ...newChannels]);
-      }
+      const { data } = (await API.graphql(
+        graphqlOperation(listChannelsWithMessages)
+      )) as ListChannelsGraphQLResponse;
+      const newChannels = data.listChannels.items.map(newChannel => ({
+        name: newChannel.name,
+        messages: newChannel.messages.items.map(newMessage => ({
+          id: newMessage.id,
+          content: newMessage.content,
+          user: newMessage.owner,
+          timestamp: new Date(newMessage.timestamp)
+        })),
+        id: newChannel.id
+      }));
+      setChannels(channels => [...channels, ...newChannels]);
     }
     fetchData();
   }, []);
