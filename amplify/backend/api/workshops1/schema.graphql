@@ -1,4 +1,27 @@
-type Channel @model {
+type Channel
+  @model
+  @auth(
+    rules: [
+      { allow: owner }
+      { allow: groups, groups: ["users"], operations: [read] }
+    ]
+  ) {
   id: ID!
   name: String!
+  messages: [Message]
+    @connection(name: "ChannelMessages", sortField: "timestamp")
+}
+type Message
+  @model
+  @auth(
+    rules: [
+      { allow: owner }
+      { allow: groups, groups: ["users"], operations: [read, create] }
+    ]
+  ) {
+  id: ID!
+  content: String
+  channel: Channel @connection(name: "ChannelMessages", sortField: "sendDate")
+  timestamp: AWSDateTime!
+  owner: String
 }

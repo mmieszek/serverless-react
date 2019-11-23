@@ -15,6 +15,26 @@ export type DeleteChannelInput = {
   id?: string | null,
 };
 
+export type CreateMessageInput = {
+  id?: string | null,
+  content?: string | null,
+  timestamp: string,
+  owner?: string | null,
+  messageChannelId?: string | null,
+};
+
+export type UpdateMessageInput = {
+  id: string,
+  content?: string | null,
+  timestamp?: string | null,
+  owner?: string | null,
+  messageChannelId?: string | null,
+};
+
+export type DeleteMessageInput = {
+  id?: string | null,
+};
+
 export type ModelChannelFilterInput = {
   id?: ModelIDFilterInput | null,
   name?: ModelStringFilterInput | null,
@@ -49,6 +69,16 @@ export type ModelStringFilterInput = {
   beginsWith?: string | null,
 };
 
+export type ModelMessageFilterInput = {
+  id?: ModelIDFilterInput | null,
+  content?: ModelStringFilterInput | null,
+  timestamp?: ModelStringFilterInput | null,
+  owner?: ModelStringFilterInput | null,
+  and?: Array< ModelMessageFilterInput | null > | null,
+  or?: Array< ModelMessageFilterInput | null > | null,
+  not?: ModelMessageFilterInput | null,
+};
+
 export type CreateChannelMutationVariables = {
   input: CreateChannelInput,
 };
@@ -58,6 +88,18 @@ export type CreateChannelMutation = {
     __typename: "Channel",
     id: string,
     name: string,
+    messages:  {
+      __typename: "ModelMessageConnection",
+      items:  Array< {
+        __typename: "Message",
+        id: string,
+        content: string | null,
+        timestamp: string,
+        owner: string | null,
+      } | null > | null,
+      nextToken: string | null,
+    } | null,
+    owner: string | null,
   } | null,
 };
 
@@ -70,6 +112,18 @@ export type UpdateChannelMutation = {
     __typename: "Channel",
     id: string,
     name: string,
+    messages:  {
+      __typename: "ModelMessageConnection",
+      items:  Array< {
+        __typename: "Message",
+        id: string,
+        content: string | null,
+        timestamp: string,
+        owner: string | null,
+      } | null > | null,
+      nextToken: string | null,
+    } | null,
+    owner: string | null,
   } | null,
 };
 
@@ -82,6 +136,90 @@ export type DeleteChannelMutation = {
     __typename: "Channel",
     id: string,
     name: string,
+    messages:  {
+      __typename: "ModelMessageConnection",
+      items:  Array< {
+        __typename: "Message",
+        id: string,
+        content: string | null,
+        timestamp: string,
+        owner: string | null,
+      } | null > | null,
+      nextToken: string | null,
+    } | null,
+    owner: string | null,
+  } | null,
+};
+
+export type CreateMessageMutationVariables = {
+  input: CreateMessageInput,
+};
+
+export type CreateMessageMutation = {
+  createMessage:  {
+    __typename: "Message",
+    id: string,
+    content: string | null,
+    channel:  {
+      __typename: "Channel",
+      id: string,
+      name: string,
+      messages:  {
+        __typename: "ModelMessageConnection",
+        nextToken: string | null,
+      } | null,
+      owner: string | null,
+    } | null,
+    timestamp: string,
+    owner: string | null,
+  } | null,
+};
+
+export type UpdateMessageMutationVariables = {
+  input: UpdateMessageInput,
+};
+
+export type UpdateMessageMutation = {
+  updateMessage:  {
+    __typename: "Message",
+    id: string,
+    content: string | null,
+    channel:  {
+      __typename: "Channel",
+      id: string,
+      name: string,
+      messages:  {
+        __typename: "ModelMessageConnection",
+        nextToken: string | null,
+      } | null,
+      owner: string | null,
+    } | null,
+    timestamp: string,
+    owner: string | null,
+  } | null,
+};
+
+export type DeleteMessageMutationVariables = {
+  input: DeleteMessageInput,
+};
+
+export type DeleteMessageMutation = {
+  deleteMessage:  {
+    __typename: "Message",
+    id: string,
+    content: string | null,
+    channel:  {
+      __typename: "Channel",
+      id: string,
+      name: string,
+      messages:  {
+        __typename: "ModelMessageConnection",
+        nextToken: string | null,
+      } | null,
+      owner: string | null,
+    } | null,
+    timestamp: string,
+    owner: string | null,
   } | null,
 };
 
@@ -94,6 +232,18 @@ export type GetChannelQuery = {
     __typename: "Channel",
     id: string,
     name: string,
+    messages:  {
+      __typename: "ModelMessageConnection",
+      items:  Array< {
+        __typename: "Message",
+        id: string,
+        content: string | null,
+        timestamp: string,
+        owner: string | null,
+      } | null > | null,
+      nextToken: string | null,
+    } | null,
+    owner: string | null,
   } | null,
 };
 
@@ -110,9 +260,68 @@ export type ListChannelsQuery = {
       __typename: "Channel",
       id: string,
       name: string,
+      messages:  {
+        __typename: "ModelMessageConnection",
+        nextToken: string | null,
+      } | null,
+      owner: string | null,
     } | null > | null,
     nextToken: string | null,
   } | null,
+};
+
+export type GetMessageQueryVariables = {
+  id: string,
+};
+
+export type GetMessageQuery = {
+  getMessage:  {
+    __typename: "Message",
+    id: string,
+    content: string | null,
+    channel:  {
+      __typename: "Channel",
+      id: string,
+      name: string,
+      messages:  {
+        __typename: "ModelMessageConnection",
+        nextToken: string | null,
+      } | null,
+      owner: string | null,
+    } | null,
+    timestamp: string,
+    owner: string | null,
+  } | null,
+};
+
+export type ListMessagesQueryVariables = {
+  filter?: ModelMessageFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type ListMessagesQuery = {
+  listMessages:  {
+    __typename: "ModelMessageConnection",
+    items:  Array< {
+      __typename: "Message",
+      id: string,
+      content: string | null,
+      channel:  {
+        __typename: "Channel",
+        id: string,
+        name: string,
+        owner: string | null,
+      } | null,
+      timestamp: string,
+      owner: string | null,
+    } | null > | null,
+    nextToken: string | null,
+  } | null,
+};
+
+export type OnCreateChannelSubscriptionVariables = {
+  owner: string,
 };
 
 export type OnCreateChannelSubscription = {
@@ -120,7 +329,23 @@ export type OnCreateChannelSubscription = {
     __typename: "Channel",
     id: string,
     name: string,
+    messages:  {
+      __typename: "ModelMessageConnection",
+      items:  Array< {
+        __typename: "Message",
+        id: string,
+        content: string | null,
+        timestamp: string,
+        owner: string | null,
+      } | null > | null,
+      nextToken: string | null,
+    } | null,
+    owner: string | null,
   } | null,
+};
+
+export type OnUpdateChannelSubscriptionVariables = {
+  owner: string,
 };
 
 export type OnUpdateChannelSubscription = {
@@ -128,7 +353,23 @@ export type OnUpdateChannelSubscription = {
     __typename: "Channel",
     id: string,
     name: string,
+    messages:  {
+      __typename: "ModelMessageConnection",
+      items:  Array< {
+        __typename: "Message",
+        id: string,
+        content: string | null,
+        timestamp: string,
+        owner: string | null,
+      } | null > | null,
+      nextToken: string | null,
+    } | null,
+    owner: string | null,
   } | null,
+};
+
+export type OnDeleteChannelSubscriptionVariables = {
+  owner: string,
 };
 
 export type OnDeleteChannelSubscription = {
@@ -136,5 +377,89 @@ export type OnDeleteChannelSubscription = {
     __typename: "Channel",
     id: string,
     name: string,
+    messages:  {
+      __typename: "ModelMessageConnection",
+      items:  Array< {
+        __typename: "Message",
+        id: string,
+        content: string | null,
+        timestamp: string,
+        owner: string | null,
+      } | null > | null,
+      nextToken: string | null,
+    } | null,
+    owner: string | null,
+  } | null,
+};
+
+export type OnCreateMessageSubscriptionVariables = {
+  owner?: string | null,
+};
+
+export type OnCreateMessageSubscription = {
+  onCreateMessage:  {
+    __typename: "Message",
+    id: string,
+    content: string | null,
+    channel:  {
+      __typename: "Channel",
+      id: string,
+      name: string,
+      messages:  {
+        __typename: "ModelMessageConnection",
+        nextToken: string | null,
+      } | null,
+      owner: string | null,
+    } | null,
+    timestamp: string,
+    owner: string | null,
+  } | null,
+};
+
+export type OnUpdateMessageSubscriptionVariables = {
+  owner: string,
+};
+
+export type OnUpdateMessageSubscription = {
+  onUpdateMessage:  {
+    __typename: "Message",
+    id: string,
+    content: string | null,
+    channel:  {
+      __typename: "Channel",
+      id: string,
+      name: string,
+      messages:  {
+        __typename: "ModelMessageConnection",
+        nextToken: string | null,
+      } | null,
+      owner: string | null,
+    } | null,
+    timestamp: string,
+    owner: string | null,
+  } | null,
+};
+
+export type OnDeleteMessageSubscriptionVariables = {
+  owner: string,
+};
+
+export type OnDeleteMessageSubscription = {
+  onDeleteMessage:  {
+    __typename: "Message",
+    id: string,
+    content: string | null,
+    channel:  {
+      __typename: "Channel",
+      id: string,
+      name: string,
+      messages:  {
+        __typename: "ModelMessageConnection",
+        nextToken: string | null,
+      } | null,
+      owner: string | null,
+    } | null,
+    timestamp: string,
+    owner: string | null,
   } | null,
 };
